@@ -8,7 +8,7 @@ namespace crypto.projects
 {
     public class Keys
     {
-        private List<KeyPair> keyPairs;
+        public List<KeyPair> keyPairs;
 
         public Keys()
         {
@@ -36,16 +36,28 @@ namespace crypto.projects
                     {
                         Key = nextIndex.ToString(),
                         PrivateKey = Convert.ToBase64String(privateKey.D),
-                        PublicKey = Convert.ToBase64String(publicKey.Modulus)
-                    });;;
+                        PublicKey = Convert.ToBase64String(publicKey.Modulus),
+                        Parameters = new Dictionary<string, byte[]>()
+                        {
+                            { "D", privateKey.D },
+                            { "P", privateKey.P },
+                            { "Q", privateKey.Q },
+                            { "Modulus", privateKey.Modulus },
+                            { "DQ", privateKey.DQ },
+                            { "DP", privateKey.DP },
+                            { "Exponent", publicKey.Exponent },
+                            { "InverseQ", privateKey.InverseQ }
+                        }
+                    });
 
                     // Guardar el diccionario en un archivo JSON
                     SaveToJson();
+                    Console.WriteLine("Par de claves generadas y guardadas en keys.json\n");
                 }
             }
             catch (CryptographicException e)
             {
-                Console.WriteLine($"Error de criptografía: {e.Message}");
+                Console.WriteLine($"Error de criptografía: {e.Message}\n");
             }
         }
 
@@ -63,7 +75,7 @@ namespace crypto.projects
             File.WriteAllText("keys.json", json);
         }
 
-        private void LoadFromJson()
+        public void LoadFromJson()
         {
             try
             {
@@ -91,5 +103,6 @@ namespace crypto.projects
         public string Key { get; set; }
         public string PrivateKey { get; set; }
         public string PublicKey { get; set; }
+        public Dictionary<string, byte[]> Parameters {  get; set; }
     }
 }
