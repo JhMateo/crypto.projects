@@ -1,33 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace crypto.projects
 {
     internal class Sign
     {
+        // Contador para generar nombres únicos de archivos ZIP
         int zipCounter = 0;
 
         public void SignMessage(Keys keys)
         {
+            // Verificar la existencia de claves
             if (!CheckKeyExistence(keys))
                 return;
 
+            // Mostrar las llaves públicas disponibles
             DisplayPublicKeys(keys);
 
+            // Elegir una llave pública para firmar el mensaje
             int keyIndex = ChoosePublicKey(keys);
             if (keyIndex == -1)
                 return;
 
+            // Obtener la llave pública seleccionada
             KeyPair selectedKeyPair = keys.keyPairs[keyIndex];
 
+            // Solicitar al usuario que ingrese el mensaje a firmar
             Console.WriteLine("\n > Escriba el mensaje para firmar:");
             string message = Console.ReadLine();
 
+            // Verificar si se ingresó un mensaje válido
             if (string.IsNullOrWhiteSpace(message))
             {
                 Console.WriteLine("Error: No se ingresó ningún mensaje.\n");
@@ -36,22 +39,25 @@ namespace crypto.projects
 
             try
             {
+                // Generar la firma del mensaje utilizando la llave privada
                 byte[] signature = GenerateSignature(selectedKeyPair, message);
 
+                // Verificar si se generó la firma correctamente
                 if (signature == null)
                     return;
 
+                // Comprimir y guardar los archivos de firma, mensaje y clave pública
                 CompressAndSaveFiles(signature, message, selectedKeyPair.PublicKey);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al firmar el mensaje: {ex.Message}\n");
-                // Registrar el error con más detalles
             }
         }
 
         private bool CheckKeyExistence(Keys keys)
         {
+            // Verificar la existencia de claves
             if (!File.Exists("keys.json") || keys.keyPairs.Count == 0)
             {
                 Console.WriteLine("Error: No se encontraron pares de claves. Por favor genera un par primero.\n");
@@ -60,8 +66,9 @@ namespace crypto.projects
             return true;
         }
 
-        private void DisplayPublicKeys(Keys keys)
+        public void DisplayPublicKeys(Keys keys)
         {
+            // Mostrar las llaves públicas disponibles
             Console.WriteLine("Llaves públicas disponibles:");
             for (int i = 0; i < keys.keyPairs.Count; i++)
             {
@@ -69,9 +76,10 @@ namespace crypto.projects
             }
         }
 
-        private int ChoosePublicKey(Keys keys)
+        public int ChoosePublicKey(Keys keys)
         {
-            Console.WriteLine("\n > Elija una llave pública para firmar el mensaje (Ingrese el número de la llave):");
+            // Elegir una llave pública para firmar el mensaje
+            Console.WriteLine("\n > Elija una llave pública (Ingrese el número de la llave):");
             string keyChoice = Console.ReadLine();
 
             if (!int.TryParse(keyChoice, out int keyIndex) || keyIndex < 0 || keyIndex >= keys.keyPairs.Count)
@@ -85,6 +93,7 @@ namespace crypto.projects
 
         private byte[] GenerateSignature(KeyPair keyPair, string message)
         {
+            // Generar la firma del mensaje utilizando la llave privada
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
             RSAParameters privateKeyParams = ConvertToRSAParameters(keyPair.Parameters);
 
@@ -95,8 +104,9 @@ namespace crypto.projects
             }
         }
 
-        private RSAParameters ConvertToRSAParameters(Dictionary<string, byte[]> parameters)
+        public RSAParameters ConvertToRSAParameters(Dictionary<string, byte[]> parameters)
         {
+            // Convertir los parámetros de la llave a RSAParameters
             return new RSAParameters
             {
                 D = parameters["D"],
@@ -112,6 +122,7 @@ namespace crypto.projects
 
         private void CompressAndSaveFiles(byte[] signature, string message, string publicKey)
         {
+            // Comprimir y guardar los archivos de firma, mensaje y clave pública en un archivo ZIP
             try
             {
                 // Guardar la firma, el mensaje y la llave publica en un archivo
@@ -144,6 +155,7 @@ namespace crypto.projects
         }
         private int GetUniqueZipCounter()
         {
+            // Obtener un contador único para generar nombres de archivos ZIP
             int counter = zipCounter;
             while (File.Exists($"firma_{counter}.zip"))
             {
