@@ -1,8 +1,4 @@
 ﻿using crypto.projects;
-using System;
-using System.IO;
-using System.Security.Cryptography;
-
 
 class Program
 {
@@ -13,6 +9,7 @@ class Program
             // Inicializar parametros
             Keys keys = new Keys();
             Sign sign = new Sign();
+            Verify verify = new Verify();
 
             // Menú
             Console.WriteLine("---------------- MENÚ ----------------");
@@ -34,12 +31,13 @@ class Program
                     sign.SignMessage(keys);
                     break;
                 case 3:
+                    verify.VerifySignature(keys);
                     break;
                 case 4:
                     Console.WriteLine("Saliendo del programa...\n");
                     return;
                 default:
-                    Console.WriteLine("Opción no valida");
+                    Console.WriteLine("Opción no valida\n");
                     break;
             }
         }
