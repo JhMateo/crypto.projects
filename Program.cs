@@ -16,7 +16,7 @@ class Program
 
             // Menú
             Console.WriteLine("---------------- MENÚ ----------------");
-            Console.WriteLine("1. Generar el par de claves pública y privada");
+            Console.WriteLine("1. Generar par de claves pública y privada");
             Console.WriteLine("2. Firmar el archivo de texto");
             Console.WriteLine("3. Verificar la firma");
             Console.WriteLine("4. Salir");
