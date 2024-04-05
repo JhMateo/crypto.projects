@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace crypto.projects
 {
@@ -60,7 +56,7 @@ namespace crypto.projects
             return true;
         }
 
-        private void DisplayPublicKeys(Keys keys)
+        public void DisplayPublicKeys(Keys keys)
         {
             Console.WriteLine("Llaves públicas disponibles:");
             for (int i = 0; i < keys.keyPairs.Count; i++)
@@ -69,9 +65,9 @@ namespace crypto.projects
             }
         }
 
-        private int ChoosePublicKey(Keys keys)
+        public int ChoosePublicKey(Keys keys)
         {
-            Console.WriteLine("\n > Elija una llave pública para firmar el mensaje (Ingrese el número de la llave):");
+            Console.WriteLine("\n > Elija una llave pública (Ingrese el número de la llave):");
             string keyChoice = Console.ReadLine();
 
             if (!int.TryParse(keyChoice, out int keyIndex) || keyIndex < 0 || keyIndex >= keys.keyPairs.Count)
@@ -95,7 +91,7 @@ namespace crypto.projects
             }
         }
 
-        private RSAParameters ConvertToRSAParameters(Dictionary<string, byte[]> parameters)
+        public RSAParameters ConvertToRSAParameters(Dictionary<string, byte[]> parameters)
         {
             return new RSAParameters
             {
